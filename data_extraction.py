@@ -3,6 +3,7 @@ import yaml
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy import inspect
+from datetime import datetime
 import psycopg2
 import tabula
 file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
@@ -55,29 +56,38 @@ class DataExtractor:
                 df = pd.read_sql_table("legacy_users", dbConnection)   
                 return df
 
-                                                 #########DATA CLEANING######       
-        #(Milestone2, Task2, Step6)
+                                                 #########DATA CLEANING###### Task 3 Step.6     
+        #(Milestone2, Task3, Step6)
 #In this step we will clean the user data (df = dataframe)
         def clean_user_data(self, df):
-                dataframe_head = df.head()
-                dataframe_with_null = df.copy()
-                drop_null = df.dropna(inplace=True)
-                null_values = dataframe_with_null.isnull() #Get the null values
+             
+        #Get the Null values
+                df_null = df.isnull()
+        #Drop Null values
+                df_cleaned = df.dropna()
+        #Drop duplicate rows
+                df_cleaned =  df_cleaned.drop_duplicates()
+        #Clean date of birth column
+                #Find the rows with dates in the following format: "%Y/%m/%d"
+                filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains("/")]
+                #Find rows with letters in the "date_of_birth" column 
+                filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains('[a-zA-Z]', regex=True)]
+                #Convert the date of birth column to the following format: "%Y-%m-%d"
+                df_cleaned['date_of_birth'] = pd.to_datetime(df_cleaned['date_of_birth'], errors='coerce')
+                #Convert the datetime values to the following format: %Y-%m-%d
+                df_cleaned['date_of_birth'] =  df_cleaned['date_of_birth'].dt.strftime('%Y-%m-%d')
                 
-                df.loc[df["date_of_birth"] == "NULL", "date_of_birth"] = pd.NaT
-                df.drop(1046, inplace = True)
-                df.drop(752, inplace = True)
-                df.drop(1045, inplace = True)
-                df.drop(1044, inplace = True)
-                df.drop(1043, inplace = True)
-                df.drop(1042, inplace = True)
-                df.at[360, "date_of_birth"] = "1968-10-16" #Change the date format at position 360
-                df.at[697, "date_of_birth"] = "1971-10-23"
-                df.at[1623, "date_of_birth"] = "1951-01-27"
-                df.at[1629, "date_of_birth"] = "1951-01-27"
-                df["date_of_birth"] = pd.to_datetime(df["date_of_birth"], format= "%Y-%m-%d")
-                df["join_date"] = pd.to_datetime(df["join_date"], format= "%Y-%m-%d")
-                return null_values
+        
+        #Clean the joindate column
+                ##Find the rows with dates in the following format: "%Y/%m/%d"
+                filtered_df2 = df_cleaned[df_cleaned['join_date'].str.contains("/")]
+                #Find rows with letters in the "date_of_birth" column 
+                filtered_df_2 = df_cleaned[df_cleaned['join_date'].str.contains('[a-zA-Z]', regex=True)]
+                #Convert the join date column to the following format: "%Y-%m-%d"
+                df_cleaned['join_date'] = pd.to_datetime(df_cleaned['join_date'], errors='coerce')
+                #Replace NaT values to the following format:"%Y-%m-%d"
+                df_cleaned['join_date'] =  df_cleaned['join_date'].dt.strftime('%Y-%m-%d')            
+                return   df_cleaned
 
 if __name__ == "__main__":
         file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
@@ -87,22 +97,13 @@ if __name__ == "__main__":
         tables = extractor.list_db_tables(file_path)
         user_table_name = "legacy_users"
         df = extractor.read_rds_table(file_path,user_table_name)
-        cleaned_data = extractor.clean_user_data(df)
-        #dataframe.to_excel('D:\Aicore_projects\Data Manipulation\Multinational Retail Data\data333.xlsx', index=False) 
-        #print(df)
-        #print(df.head(15))
-        #print(cleaned_data)
-        #print(os.listdir())
-        #print(df.shape)
-        #print(df[df.isnull()])
-        #print(df.columns)
-        #print(df.dtypes)
-        #print(df.isna())
-        #print(df.isna().sum())
-        #print(df.iloc[1623])
-        #print(df.loc[1620:1630, "date_of_birth"])
+        df_cleaned = extractor.clean_user_data(df)
+       
+        print(df_cleaned["date_of_birth"])
+   
+       
         
-        
+
 
 
         
