@@ -1,9 +1,12 @@
 from data_extraction import DataExtractor
+extractor = DataExtractor()
 import pandas as pd
 import sys
 from datetime import datetime
 import os
-from data_extraction import DataExtractor
+import tabula
+pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
+
 #sys.path.append(os.path.dirname('D:\Aicore_projects\Data Manipulation\Multinational Retail Data'))
 script_dir = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data"
 sys.path.append(script_dir)
@@ -13,11 +16,11 @@ sys.path.append(script_dir)
 #This class will be used to clean data from each of the data sources
 
 class DataCleaning:
-    def __init__(self):
-       pass
+        def __init__(self):
+                pass
 
 #In this step we will clean the user data (df = dataframe)
-    def clean_user_data(self, df):
+        def clean_user_data(self, df):
              
         #Get the Null values
                 df_null = df.isnull()
@@ -46,10 +49,30 @@ class DataCleaning:
                 #Replace NaT values to the following format:"%Y-%m-%d"
                 df_cleaned['join_date'] =  df_cleaned['join_date'].dt.strftime('%Y-%m-%d')            
                 
-                return   df_cleaned
+                return  df_cleaned
+    
+        def clean_card_data(self,  combined_df):
+                combined_df = extractor.retrieve_pdf_data(pdf_path)
+                
+                # Remove NULL values
+                pdf_cleaned =  combined_df.dropna()
+                #Remove duplicates
+                pdf_cleaned = combined_df.drop_duplicates()
+        #Clean the 'date_payment_confirmed' column
+                #Find rows with dates in the following format: "%Y/%m/%d" 
+                filtered_pdf = pdf_cleaned[pdf_cleaned['date_payment_confirmed'].str.contains("/", na=False)]
+                #Standardize the "date_payment_confirme" to the following format:"%Y-%m-%d".
+                pdf_cleaned['date_payment_confirmed'] = pd.to_datetime(pdf_cleaned['date_payment_confirmed'], errors='coerce')
+                pdf_cleaned['date_payment_confirmed'] = pdf_cleaned['date_payment_confirmed'].dt.strftime('%Y-%m-%d')
+        
+
+                return pdf_cleaned
+
+
 
 if __name__ == "__main__":
         file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
+        pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
         extractor = DataExtractor()
         cleaner = DataCleaning()
         #credentials = read_db_creds(file_path)
@@ -58,17 +81,10 @@ if __name__ == "__main__":
         user_table_name = "legacy_users"
         df = extractor.read_rds_table(file_path,user_table_name)
         df_cleaned = cleaner.clean_user_data(df)
+        combined_df = extractor.retrieve_pdf_data(pdf_path)
+        cleaned_data = cleaner.clean_card_data(combined_df)
        
-        print(df_cleaned.head(0))
+        print(cleaned_data)   
    
        
-        
-
-
         #extractor = DataExtractor
-        
-         
-    
-
-
-
