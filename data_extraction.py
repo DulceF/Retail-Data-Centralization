@@ -1,3 +1,4 @@
+import tabula
 import os
 import yaml
 import pandas as pd
@@ -5,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import inspect
 from datetime import datetime
 import psycopg2
-import tabula
+
+pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
 file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
 
 #(Milestone2, Task2, Step1)
@@ -48,23 +50,32 @@ class DataExtractor:
 #(Milestone2, Task3, Step5) 
 #In this step we will extract the database table to a pandas DataFrame  
 
-        def read_rds_table(self, file_path, tables):
+        def read_rds_table(self, file_path, table_name):
                 #Connect to PostgreSQL server
                 engine = self.init_db_engine(file_path) #Get the engine from this function
                 dbConnection = engine.connect()
                 #Read data from PostgreSQL database table and load into a DataFrame instance
-                df = pd.read_sql_table("legacy_users", dbConnection)   
+                df = pd.read_sql_table(table_name, dbConnection)   
                 return df
 
-     
+        def retrieve_pdf_data(self,pdf_path):
+                #Read the PDF file and store the list of DataFrames in "tables". 
+                # Tabula returns a list of DataFrames,one for each page of the PDF that contains tabular data
+                pdf_tables = tabula.read_pdf(pdf_path, pages="all")
+                #Combine all Dataframes into a single DataFrame
+                combined_df = pd.concat(pdf_tables)
+                return  combined_df
+
 if __name__ == "__main__":
         file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
         extractor = DataExtractor()
         #credentials = read_db_creds(file_path)
         #engine = init_db_engine()
-        tables = extractor.list_db_tables(file_path)
+        combined_df = extractor.retrieve_pdf_data(pdf_path)
 
-print(tables)
+print(combined_df)
+
+
 
 
 
