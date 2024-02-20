@@ -5,6 +5,7 @@ import pandas as pd
 from data_extraction import DataExtractor
 from data_cleaning import DataCleaning
 
+
 #(Milestone2, Task2, Step2)
 #This class is used to connect and upload data to the database
 
@@ -35,34 +36,31 @@ class DatabaseConnector:
                 #Create and return the SQLAlchemy database engine
                 engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}")      
                 return engine
+    
     def upload_to_db(self,df, table_name,file_path):
         #file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
         extractor = DataExtractor()
         cleaner = DataCleaning()
 
-        #Get the engine from the data_extraction script
+        #Get the engine from the data_extraction.py script
         engine = extractor.init_db_engine(file_path)
-        #After getting the engine, connect to the database
-        connection = engine.connect()
-        cursor = connection.cursor()
-        sql = f"CREATE TABLE {table_name} (index, first_name, last_name, date_of_birth, company,email_address, address, country, country_code, phone_number, join_date, user_uuid);"
-        cursor.execute(sql)
+
         
-        #Converting data to sql
-        df_cleaned = cleaner.clean_user_data(df)
-        df_cleaned.to_sql(table_name, connection)
-        #df_cleaned = clean_user_data(df)
-       
-        #Fetching all rows
-        sql1= f"SELECT * FROM {table_name};"
-        cursor.execute(sql1)
-        for i in cursor.fetchall():
-            print(i)
+        #'USER DATA' - After getting the engine, upload the DataFrame to the database (using Pandas 'to_sql') 
         
-        connection.commit()
-        connection.close()
-       
+        table_name = "dim_users"
+        df = cleaner.clean_user_data()
+        df.to_sql("dim_users", engine, if_exists="replace", index= False)
         
+        engine.dispose()
+        
+        #'CARD DETAILS'- After getting the engine, upload the DataFrame to the database (using Pandas 'to_sql')
+        table_name = "dim_card_details"
+        df = cleaner.clean_card_data()
+        df.to_sql("dim_card_details", engine, if_exists="replace", index= False)
+        
+        engine.dispose()
+
 if __name__ == "__main__":
     file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
     host= "data-handling-project-readonly.cq2e8zno855e.eu-west-1.rds.amazonaws.com"
