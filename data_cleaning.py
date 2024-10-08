@@ -121,7 +121,7 @@ class DataCleaning:
         #3. 'Lat' column# Drop 'lat' column
                 store_data_copy.drop(['lat'], axis='columns', inplace=True)
 
-        #4. 'Locality' , (Contains only letters, Capitalize first letter)
+        #4. 'Locality', (Contains only letters, Capitalize first letter)
                 #Replace non alphabetical values to nan (excluding spaces)
                 store_data_copy['locality'] = store_data_copy['locality'].where(store_data_copy['locality'].str.match(r'^[a-zA-Z\s\-]*$'))
                 #The first letter of each word is capitalized
@@ -130,8 +130,6 @@ class DataCleaning:
                 nan_rows_locality = store_data_copy[store_data_copy['locality'].isna()]
                 #Drop 63,172,231,333,381,414,447
                
-        #5. 'Store_code' ?????
-
         #6. 'Staff_number'     
                         
                 #6.1 Clean rows in "staff_numbers" column
@@ -148,7 +146,9 @@ class DataCleaning:
                 
                 #Drop 63,172,217,231,333,381,405,414,437,447
         #7. 'Opening_date'
-                           
+                #7.3 Replace slashes with dashes
+                store_data_copy['opening_date'] = store_data_copy['opening_date'].str.replace('/','-')
+                             
                 #7.3 Clean rows in "opening_date" column
                 store_data_copy.loc[10,'opening_date'] = '2012-10-09'  
                 store_data_copy.loc[11,'opening_date'] = '2015-07-14'                
@@ -162,16 +162,12 @@ class DataCleaning:
                 store_data_copy.loc[369,'opening_date'] = '2009-02-28'
                 store_data_copy.loc[394,'opening_date'] = '2015-03-02'
 
-                #7.3 Replace slashes with dashes
-                store_data_copy['opening_date'] = store_data_copy['opening_date'].str.replace('/','-')
                 #7.2 Convert 'opening_date' column to datetime format (converting invalid dates to NaT)      
                 store_data_copy['opening_date'] = pd.to_datetime(store_data_copy['opening_date'], errors='coerce')
+                                    
                 #7.3 Format the dates to 'YYY-MM-DD'
                 store_data_copy['opening_date'] = store_data_copy['opening_date'].dt.strftime('%Y-%m-%d')    
-          
-                #7.2 Find the (NaT) in the 'opening_date' column
-                #nan_rows_opening_date = store_data_copy.loc[store_data_copy['opening_date'].isna(),['opening_date']]
-                
+                         
                 #To drop: 63,172,217,231,333,381,405,414,437,447
                 #Filter the data frame to show only the rows where the opening_date is NaN
                 nan_rows_opening_date = store_data_copy[store_data_copy['opening_date'].isna()]
@@ -192,15 +188,11 @@ class DataCleaning:
                 store_data_copy['latitude'] = store_data_copy['latitude'].where(store_data_copy['latitude'].between(-90,90))
                 #9.3 Round the values to the same decimal place (5 decimal places for precision)
                 store_data_copy['latitude'] = store_data_copy['latitude'].round(5)
-                
-                #9.4 Clean values beyond the range
-                store_data_copy.loc[420,'latitude'] = -90
-               
-                #9.5 Check rows where "longitude" column has NaN values
+                             
+                #9.5 Check rows where "latitude" column has NaN values
                 nan_rows_latitude = store_data_copy.loc[store_data_copy['latitude'].isna(),['latitude']]
                 
-                #9.6 Deal with the nan values
-                
+               
                 #Drop 63 - Some of the latitude values are outside of the range, drop or fill?????
 
         #10. 'Country_code'
@@ -220,12 +212,12 @@ class DataCleaning:
                 #nan_continent = store_data_copy.loc[store_data_copy['continent'].isna(),['continent']]
                              
                 #print(store_data_copy['longitude'].head(20))
-                print(nan_rows_latitude)
+                store_data_copy = store_data_copy.dropna()
+                return store_data_copy
 
                 #print(store_data_copy['store_type'].unique())
                 
 ## ****Left to do Milestone 2, Task4 => 1.Check if the cc only contain numbers 2.Upload the table to the database **
-
        
 if __name__ == "__main__":
         
@@ -255,11 +247,11 @@ if __name__ == "__main__":
         #lenght = len(clean_data)
         
         #print(clean_data.loc[[31,179,248,341,375], 'staff_numbers'])
-        #clean_data.to_excel("store_data_new.xlsx", index = False) 
+        clean_data.to_excel("store_data_October.xlsx", index = False)
         
         #Print the statements to inspect the dataframe
         #print(clean_data.head(20))
-        print(clean_data)
+        #print(clean_data)
        
        
         #Remove Null values
