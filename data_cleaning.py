@@ -192,10 +192,14 @@ class DataCleaning:
                 store_data_copy['latitude'] = store_data_copy['latitude'].where(store_data_copy['latitude'].between(-90,90))
                 #9.3 Round the values to the same decimal place (5 decimal places for precision)
                 store_data_copy['latitude'] = store_data_copy['latitude'].round(5)
-                #9.4 Check rows where "longitude" column has NaN values
+                
+                #9.4 Clean values beyond the range
+                store_data_copy.loc[420,'latitude'] = -90
+               
+                #9.5 Check rows where "longitude" column has NaN values
                 nan_rows_latitude = store_data_copy.loc[store_data_copy['latitude'].isna(),['latitude']]
                 
-                #9.5 Deal with the nan values
+                #9.6 Deal with the nan values
                 
                 #Drop 63 - Some of the latitude values are outside of the range, drop or fill?????
 
@@ -214,24 +218,10 @@ class DataCleaning:
                 store_data_copy['continent'] = store_data_copy['continent'].where(store_data_copy['continent'].isin(valid_continents))
                 
                 #nan_continent = store_data_copy.loc[store_data_copy['continent'].isna(),['continent']]
-                
-             
-                #1. Identify missing values
-                #store_data_null = store_data.isnull()
-                #2. Remove  rows with NULL values
-                #store_null_list = store_data.dropna()
-                
-                #3. Remove duplicates
-                #store_cleaned =  store_cleaned.drop_duplicates()
-                
-                #4. Standardize capitalization
-                #5. Convert data type
-                #6. Handle missing values
-                #1.4 Remove Null values 
-                #store_data_copy = store_data_copy.dropna()
-                #return 
+                             
                 #print(store_data_copy['longitude'].head(20))
-                print(nan_rows_opening_date)
+                print(nan_rows_latitude)
+
                 #print(store_data_copy['store_type'].unique())
                 
 ## ****Left to do Milestone 2, Task4 => 1.Check if the cc only contain numbers 2.Upload the table to the database **
@@ -271,9 +261,8 @@ if __name__ == "__main__":
         #print(clean_data.head(20))
         print(clean_data)
        
-        #gui = show(clean_data)
-        #print(clean_data)
-
+       
+        #Remove Null values
         #Values that should not be removed: 31, 179, 248,341,375 (These have been changed in the staff_numbers column)
 
 
