@@ -2,6 +2,7 @@
 
 from data_extraction import DataExtractor
 #from pandasgui import show
+import openpyxl
 import re
 import pandas as pd
 import sys
@@ -12,11 +13,11 @@ import tabula
 extractor = DataExtractor()
 
 #sys.path.append(os.path.dirname('D:\Aicore_projects\Data Manipulation\Multinational Retail Data'))
-script_dir = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data"
+script_dir = r"E:\Aicore projects\Multinational_data"
 sys.path.append(script_dir)
 
-
-pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
+file_path = r"E:\\Aicore projects\Multinational_data\\db_creds.yaml"
+pdf_path = r"https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
 
 #Read data from the PDF and get the combined dataframe
 
@@ -31,37 +32,23 @@ pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details
 class DataCleaning:
         def __init__(self):
                 pass
-
-#In this step we will clean the user data (df = dataframe)
-        def clean_user_data(self, df):
-   
-        #Get the Null values
-                df_null = df.isnull()
-        #Drop Null values
-                df_cleaned = df.dropna()
-        #Drop duplicate rows
-                df_cleaned =  df_cleaned.drop_duplicates()
-        #Clean date of birth column
-                #Find the rows with dates in the following format: "%Y/%m/%d"
-                filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains("/")]
-                #Find rows with letters in the "date_of_birth" column 
-                filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains('[a-zA-Z]', regex=True)]
-                #Convert the date of birth column to the following format: "%Y-%m-%d"
-                df_cleaned['date_of_birth'] = pd.to_datetime(df_cleaned['date_of_birth'], errors='coerce')
-                #Convert the datetime values to the following format: %Y-%m-%d
-                df_cleaned['date_of_birth'] =  df_cleaned['date_of_birth'].dt.strftime('%Y-%m-%d')
-                
         
-        #Clean the joindate column
-                ##Find the rows with dates in the following format: "%Y/%m/%d"
-                filtered_df2 = df_cleaned[df_cleaned['join_date'].str.contains("/")]
-                #Find rows with letters in the "join_date" column 
-                filtered_df_2 = df_cleaned[df_cleaned['join_date'].str.contains('[a-zA-Z]', regex=True)]
-                #Convert the join date column to the following format: "%Y-%m-%d"
-                df_cleaned['join_date'] = pd.to_datetime(df_cleaned['join_date'], errors='coerce')
-                #Replace NaT values to the following format:"%Y-%m-%d"
-                df_cleaned['join_date'] =  df_cleaned['join_date'].dt.strftime('%Y-%m-%d')            
-                
+#In this step we will clean the user data (df = dataframe)
+        def clean_user_data(self,file_path):
+                #Load the data from the rds table
+                df = extractor.read_rds_table(file_path, table_name = "legacy_users")
+                print(type(df))
+                #Replace "NULL" with actual NaN values     
+                df.replace("NULL", pd.NA, inplace = True)                            
+               
+                #Clean date_of_birth column -  #Convert the date of birth column to the standard Pandas format "%Y/%m/%d"
+                df['date_of_birth'] = pd.to_datetime(df['date_of_birth'], errors='coerce')
+                   
+                #Clean the joindate column -  #Convert the join_date column to the standard Pandas format "%Y/%m/%d"
+                df['join_date'] = pd.to_datetime(df['join_date'], errors='coerce')
+              
+                df_cleaned = df.dropna(subset=['date_of_birth', 'join_date'])
+                df_cleaned = df.dropna().drop_duplicates()  #Drop Null values and duplicates
                 return  df_cleaned
     
         def clean_card_data(self, pdf_path):
@@ -185,7 +172,7 @@ class DataCleaning:
                 #9.1 Identify and convert non numeric numbers in the 'latitude' column
                 store_data_copy['latitude'] = pd.to_numeric(store_data_copy['latitude'],errors='coerce')
                 #9.2 Latitude values should be between -90 and 90 (values outside the range are converted to nan)    
-                store_data_copy['latitude'] = store_data_copy['latitude'].where(store_data_copy['latitude'].between(-90,90))
+                #store_data_copy['latitude'] = store_data_copy['latitude'].where(store_data_copy['latitude'].between(-90,90))
                 #9.3 Round the values to the same decimal place (5 decimal places for precision)
                 store_data_copy['latitude'] = store_data_copy['latitude'].round(5)
                              
@@ -213,9 +200,17 @@ class DataCleaning:
                              
                 #print(store_data_copy['longitude'].head(20))
                 store_data_copy = store_data_copy.dropna()
+                nan_df = store_data_copy[store_data_copy.isna().any(axis=1)]
+                
+                
+                #print(nan_df)
+                #print(store_data_copy.columns)
+                #print(store_data_copy.index)
+                #print(store_data_copy['store_type'].unique())
+                print(type(store_data_copy)) #<class 'pandas.core.frame.DataFrame'>
                 return store_data_copy
 
-                #print(store_data_copy['store_type'].unique())
+             
                 
 ## ****Left to do Milestone 2, Task4 => 1.Check if the cc only contain numbers 2.Upload the table to the database **
        
@@ -227,14 +222,16 @@ if __name__ == "__main__":
         pdf_path = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"       
         #combined_df = extractor.retrieve_pdf_data(pdf_path)
         #cleaned_data = cleaner.clean_card_data(pdf_path)
-        file_path = r"D:\Aicore_projects\Data Manipulation\Multinational Retail Data\db_creds.yaml"
+        file_path = r"E:\\Aicore projects\Multinational_data\\db_creds.yaml"
         
+
         #credentials = read_db_creds(file_path)
         #engine = init_db_engine()
         #tables = extractor.list_db_tables(file_path)
         user_table_name = "legacy_users"
-        #df = extractor.read_rds_table(file_path,user_table_name)
-        #df_cleaned = cleaner.clean_user_data(df)
+        df = extractor.read_rds_table(file_path,user_table_name)
+        df_cleaned = cleaner.clean_user_data(file_path)
+        
         #pdf_cleaned = combined_df.drop_duplicates().copy() 
         #check_only_numbers = pdf_cleaned["card_number"].notna().all()
         
@@ -244,17 +241,23 @@ if __name__ == "__main__":
         headers = {"x-api-key" : "yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX"}
         store_numbers = range(1,451)
         clean_data = cleaner.called_clean_store_data(base_url,headers,store_numbers)
+        call_user_data = cleaner.clean_user_data(file_path)
+        
         #lenght = len(clean_data)
-        
+ 
+ #Print the statements to inspect the dataframe
         #print(clean_data.loc[[31,179,248,341,375], 'staff_numbers'])
-        clean_data.to_excel("store_data_October.xlsx", index = False)
-        
-        #Print the statements to inspect the dataframe
+        #clean_data.to_excel("store_data_October.xlsx", index = False)
+        #call_user_data.to_excel("user_data_December.xlsx", index=False)      
         #print(clean_data.head(20))
         #print(clean_data)
-       
-       
-        #Remove Null values
+        #print(df_cleaned)     
+      
         #Values that should not be removed: 31, 179, 248,341,375 (These have been changed in the staff_numbers column)
 
-
+#Notes
+#def clean_user_data(self,file_path):
+#Find the rows with dates in the following format: "%Y/%m/%d"
+                #filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains("/")]
+                #Find rows with letters in the "date_of_birth" column 
+                #filtered_df2 = df_cleaned[df_cleaned['date_of_birth'].str.contains('[a-zA-Z]', regex=True)]
