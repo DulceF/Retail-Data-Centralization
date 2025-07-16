@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine 
+from sqlalchemy import create_engine
 import psycopg2
 import yaml
 import pandas as pd
