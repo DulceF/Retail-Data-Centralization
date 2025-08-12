@@ -5,12 +5,12 @@
 A multinational company sells various goods across the globe. Its sales data is fragmented across different sources and formats, making analysis difficult and error-prone. This project focuses on building a robust ETL pipeline to ingest, transform and load diverse datasets into a centralized PostgreSQL database enabling efficient analytics and reporting.
 
 **Technologies**
-
--Languages & libraries: Python, Pandas, SQL
--Database connectivity: SQLAlchemy, psycopg2
--Cloud integration: Boto3 (AWS S3)
--Databae storage: PostgreSQL
--Version control: Git
+   
+  Languages & libraries: Python, Pandas, SQL
+  Database connectivity: SQLAlchemy, psycopg2
+  Cloud integration: Boto3 (AWS S3)
+  Databae storage: PostgreSQL
+  Version control: Git
 
 **Architecture & Data Flow**
 
@@ -31,7 +31,7 @@ The ETL process follows this pipeline:
 Raw Data Sources
   - PostgreSQL dump (.tar): https://cdn.theaicore.com/content/projects/MRDC_Data/mrdc_raw_data_db.tar
   - S3 Bucket CSV: s3://data-handling-public/products.csv
--Shcema
+   -Shcema
 Includes tables like: Orders, users, card details, store details etc.
 
 **Setup & Storage**
