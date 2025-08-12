@@ -6,12 +6,11 @@ A multinational company sells various goods across the globe. Its sales data is 
 
 **Technologies**
 
-- Python
-- PostgreSQL
-- AWS S3
-- Pandas, Numpy
-- Git
-- SQL
+Languages & libraries: Python, Pandas, SQL
+Database connectivity: SQLAlchemy, psycopg2
+Cloud integration: Boto3 (AWS S3)
+Databae storage: PostgreSQL
+Version control: Git
 
 **Architecture & Data Flow**
 
