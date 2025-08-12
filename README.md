@@ -1,4 +1,4 @@
-**Multinationa Retail Data Centralisation**
+**Multinational Retail Data Centralisation – ETL pipeline with AWS, PostgreSQL, and Python**
 
 **Project Description**
 
