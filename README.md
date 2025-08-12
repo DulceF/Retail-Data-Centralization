@@ -6,11 +6,11 @@ A multinational company sells various goods across the globe. Its sales data is 
 
 **Technologies**
 
-Languages & libraries: Python, Pandas, SQL
-Database connectivity: SQLAlchemy, psycopg2
-Cloud integration: Boto3 (AWS S3)
-Databae storage: PostgreSQL
-Version control: Git
+-Languages & libraries: Python, Pandas, SQL
+-Database connectivity: SQLAlchemy, psycopg2
+-Cloud integration: Boto3 (AWS S3)
+-Databae storage: PostgreSQL
+-Version control: Git
 
 **Architecture & Data Flow**
 
@@ -39,24 +39,27 @@ Includes tables like: Orders, users, card details, store details etc.
 To run this project locally, follow these steps:
 
 1. Clone the repository
-git clone https://github.com/DulceF/mrdc-etl-pipeline.git
-cd mrdc-etl-pipeline
+*git clone https://github.com/DulceF/mrdc-etl-pipeline.git
+cd mrdc-etl-pipeline*
 
 2. Install required packages
-   pip install -r requirements.txt
+   *pip install -r requirements.txt*
 
-3. 
+3. Run the ETL scripts
+The ETL pipeline consist of the following scripts
+   #Extract raw data
+*Python extraction.py*
+   #Clean and transform data:
+*Python cleaning.py*
+   #Connect to the database, upload files
+*Python utilitis.py*
 
-**Metrics and Results**
--Performance
--Data quality
--Insights
-
+   
 **Challenges & Lessons Learned**
 
--Challenge
--Solution
--Lesson
+-Challenge: Inconsistent date & weight format across sources
+-Solution: Implemented parsing functions in python ith regex + datetime
+-Lesson: Addressing format discrepancies early saves hours of debugging in later ETL stages.
 
 **License**
 This project is licensed under MIT License. 
