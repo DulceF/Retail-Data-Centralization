@@ -42,19 +42,14 @@ To run this project locally, follow these steps:
 
       5.1. Clone the repository: *git clone https://github.com/DulceF/mrdc-etl-pipeline.git cd mrdc-etl-pipeline*
    
-      5.2. Install required packages
-      *pip install -r requirements.txt*
+      5.2. Install required packages: *pip install -r requirements.txt*
    
-      5.3. Run the ETL scripts
+      5.3. Run the ETL scripts:
    The ETL pipeline consist of the following scripts
-      #Extract raw data
-   *Python extraction.py*
-      #Clean and transform data:
-   *Python cleaning.py*
-      #Connect to the database, upload files
-   *Python utilitis.py*
-   
-      
+      #Extract raw data: *Python extraction.py*
+      #Clean and transform data:*Python cleaning.py*
+      #Connect to the database, upload files: Python utilitis.py*
+       
 **6. Challenges & Lessons Learned**
 
 + Challenge: Inconsistent date & weight format across sources
