@@ -46,9 +46,9 @@ To run this project locally, follow these steps:
    
       5.3. Run the ETL scripts:
    The ETL pipeline consist of the following scripts
-      #Extract raw data: *Python extraction.py*
-      #Clean and transform data:*Python cleaning.py*
-      #Connect to the database, upload files: Python utilitis.py*
++ Extract raw data: *Python extraction.py*
++ Clean and transform data:*Python cleaning.py*
++ Connect to the database, upload files: Python utilitis.py*
        
 **6. Challenges & Lessons Learned**
 
