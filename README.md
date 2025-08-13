@@ -40,9 +40,7 @@ Includes tables like: Orders, users, card details, store details etc.
 
 To run this project locally, follow these steps:
 
-      5.1. Clone the repository
-   *git clone https://github.com/DulceF/mrdc-etl-pipeline.git
-   cd mrdc-etl-pipeline*
+      5.1. Clone the repository: *git clone https://github.com/DulceF/mrdc-etl-pipeline.git cd mrdc-etl-pipeline*
    
       5.2. Install required packages
       *pip install -r requirements.txt*
