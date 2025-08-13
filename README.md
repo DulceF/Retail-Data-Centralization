@@ -58,9 +58,7 @@ The ETL pipeline consist of the following scripts
 **Challenges & Lessons Learned**
 
 + Challenge: Inconsistent date & weight format across sources
-
-+Solution: Implemented parsing functions in python ith regex + datetime
-
++ Solution: Implemented parsing functions in python ith regex + datetime
 + Lesson: Addressing format discrepancies early saves hours of debugging in later ETL stages.
 
 **License**
