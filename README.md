@@ -24,7 +24,7 @@ The ETL process follows this pipeline:
 3. **Data Loading**
    -Loaded clean datasets into a centralized PostgreSQL database for analysis
 
-<img width="785" height="428" alt="image" src="https://github.com/user-attachments/assets/6149628b-6284-4e60-b699-d3ebe2356067" />
+<img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/6149628b-6284-4e60-b699-d3ebe2356067" />
 
 **Data Sources**
 
@@ -57,7 +57,7 @@ The ETL pipeline consist of the following scripts
    
 **Challenges & Lessons Learned**
 
--Challenge: Inconsistent date & weight format across sources
++Challenge: Inconsistent date & weight format across sources
 -Solution: Implemented parsing functions in python ith regex + datetime
 -Lesson: Addressing format discrepancies early saves hours of debugging in later ETL stages.
 
