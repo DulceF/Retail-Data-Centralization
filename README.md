@@ -18,9 +18,11 @@ The ETL process follows this pipeline:
 
  **3.1 Data Extraction**
    -From PostgreSQL files and AWS S3 (csv files)
+   
  **3.2 Data Transformation**
    -Cleaned and standardized using python 
    -Handled inconsisten formats and missing values
+   
  **3.3 Data Loading**
    -Loaded clean datasets into a centralized PostgreSQL database for analysis
 
