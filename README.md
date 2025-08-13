@@ -1,6 +1,6 @@
 **Multinational Retail Data Centralisation – ETL pipeline with AWS, PostgreSQL, and Python**
 
-**Project Description**
+** 1. Project Description**
 
 A multinational company sells various goods across the globe. Its sales data is fragmented across different sources and formats, making analysis difficult and error-prone. This project focuses on building a robust ETL pipeline to ingest, transform and load diverse datasets into a centralized PostgreSQL database enabling efficient analytics and reporting.
 
