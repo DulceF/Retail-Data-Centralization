@@ -52,7 +52,7 @@ To run this project locally, follow these steps:
        
 **6. Challenges & Lessons Learned**
 
-+ Challenge: Inconsistent date & weight format across sources
++ Challenge: Inconsistent date and weight format across sources
 + Solution: Implemented parsing functions in python ith regex + datetime
 + Lesson: Addressing format discrepancies early saves hours of debugging in later ETL stages.
 
